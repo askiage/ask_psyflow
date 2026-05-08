@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PsyFlow — AI Marketing Psychology Agent</title>
+  <meta name="description" content="PsyFlow is an AI marketing psychology agent prototype for builders, founders, and growth teams." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #08090a;
+      --panel: #0f1011;
+      --surface: rgba(255,255,255,.035);
+      --surface-2: rgba(255,255,255,.055);
+      --surface-3: #191a1b;
+      --text: #f7f8f8;
+      --muted: #d0d6e0;
+      --soft: #8a8f98;
+      --dim: #62666d;
+      --line: rgba(255,255,255,.08);
+      --line-soft: rgba(255,255,255,.05);
+      --brand: #5e6ad2;
+      --brand-2: #7170ff;
+      --brand-3: #9ca3ff;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #fb7185;
+      --radius: 18px;
+      --shadow: 0 24px 90px rgba(0,0,0,.35);
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-feature-settings: "cv01", "ss03";
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 16% -10%, rgba(94,106,210,.35), transparent 34%),
+        radial-gradient(circle at 88% 8%, rgba(113,112,255,.18), transparent 28%),
+        linear-gradient(180deg, #08090a 0%, #050506 100%);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.75), transparent 70%);
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap { width: min(1160px, calc(100% - 32px)); margin: 0 auto; }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(8,9,10,.72);
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; min-height: 68px; gap: 16px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -.02em; }
+    .mark { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: linear-gradient(135deg, var(--brand), #2b2d66); box-shadow: 0 0 0 1px rgba(255,255,255,.12) inset; }
+    .nav-links { display: flex; align-items: center; gap: 18px; color: var(--soft); font-size: 13px; font-weight: 510; }
+    .nav-links a:hover { color: var(--text); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 9px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.035);
+      color: var(--text);
+      font-weight: 510;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.06); }
+    .btn.primary { background: var(--brand); border-color: rgba(255,255,255,.12); color: white; box-shadow: 0 10px 36px rgba(94,106,210,.28); }
+    .btn.primary:hover { background: var(--brand-2); }
+    .btn.full { width: 100%; }
+
+    .hero { padding: 84px 0 46px; text-align: center; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #23252a; border-radius: 999px; padding: 8px 12px; color: var(--muted); background: rgba(255,255,255,.025); font-size: 12px; font-weight: 510; }
+    .dot { width: 7px; height: 7px; border-radius: 999px; background: var(--green); box-shadow: 0 0 18px var(--green); }
+    h1 { margin: 20px auto 0; max-width: 920px; font-size: clamp(46px, 8vw, 86px); line-height: .95; font-weight: 510; letter-spacing: -1.58px; }
+    .hero p { margin: 22px auto 0; max-width: 760px; color: var(--soft); font-size: clamp(16px, 2vw, 19px); line-height: 1.68; }
+    .hero-actions { margin-top: 30px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 28px auto 0; max-width: 880px; }
+    .stat { border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.025); padding: 16px; text-align: left; }
+    .stat strong { display: block; font-size: 24px; letter-spacing: -.04em; }
+    .stat span { color: var(--soft); font-size: 12px; }
+
+    .section { padding: 42px 0; }
+    .section-head { display: flex; justify-content: space-between; gap: 18px; align-items: end; margin-bottom: 18px; }
+    .section-head h2 { margin: 0; font-size: clamp(28px, 5vw, 48px); font-weight: 510; line-height: 1; letter-spacing: -1.05px; }
+    .section-head p { margin: 0; max-width: 520px; color: var(--soft); line-height: 1.6; }
+
+    .grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 16px; align-items: start; }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .card-pad { padding: 20px; }
+    .card h3 { margin: 0 0 10px; font-size: 20px; font-weight: 590; letter-spacing: -.24px; }
+    .muted { color: var(--soft); line-height: 1.6; }
+    label { display: block; color: var(--soft); font-size: 13px; margin-bottom: 8px; }
+    textarea, select, input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(0,0,0,.24);
+      color: var(--text);
+      padding: 13px 14px;
+      font: inherit;
+      outline: none;
+    }
+    textarea { min-height: 210px; resize: vertical; line-height: 1.55; }
+    textarea:focus, select:focus, input:focus { border-color: rgba(113,112,255,.72); box-shadow: 0 0 0 4px rgba(113,112,255,.11); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+    .chip { border: 1px solid #23252a; border-radius: 999px; padding: 8px 10px; color: var(--muted); background: rgba(255,255,255,.025); font-size: 12px; font-weight: 510; user-select: none; }
+    .chip.active { color: white; background: rgba(94,106,210,.35); border-color: rgba(156,163,255,.4); }
+
+    .console { background: #0b0c0e; border-bottom: 1px solid var(--line); padding: 12px 14px; display: flex; align-items: center; gap: 8px; color: var(--soft); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; }
+    .traffic { width: 10px; height: 10px; border-radius: 50%; background: #fb7185; box-shadow: 18px 0 #f59e0b, 36px 0 #10b981; margin-right: 36px; }
+    .report { display: grid; gap: 12px; }
+    .score-card { display: grid; gap: 10px; border: 1px solid var(--line); background: rgba(0,0,0,.18); border-radius: 14px; padding: 14px; }
+    .score-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .score-number { font-size: 36px; font-weight: 510; letter-spacing: -1px; }
+    .meter { height: 10px; border-radius: 999px; background: rgba(255,255,255,.06); overflow: hidden; border: 1px solid var(--line-soft); }
+    .bar { height: 100%; width: 74%; background: linear-gradient(90deg, var(--amber), var(--brand-2), var(--green)); transition: width .35s ease; }
+    .finding { border: 1px solid var(--line); border-radius: 14px; padding: 14px; background: rgba(255,255,255,.025); }
+    .finding strong { color: var(--brand-3); }
+    .finding p { margin: 5px 0 0; color: var(--soft); line-height: 1.55; }
+
+    .model-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .model { border: 1px solid var(--line); border-radius: 16px; padding: 16px; background: rgba(255,255,255,.025); min-height: 150px; }
+    .model .tag { color: var(--brand-3); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .model h3 { margin-top: 12px; }
+    .model p { margin: 0; color: var(--soft); line-height: 1.55; font-size: 14px; }
+
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .step { border: 1px solid var(--line); border-radius: 16px; padding: 16px; background: rgba(255,255,255,.025); position: relative; overflow: hidden; }
+    .step::before { content: attr(data-step); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--brand); color: white; font-weight: 590; margin-bottom: 28px; }
+    .step h3 { margin-bottom: 8px; }
+    .step p { margin: 0; color: var(--soft); line-height: 1.55; font-size: 14px; }
+
+    .submission { display: grid; grid-template-columns: .9fr 1.1fr; gap: 16px; }
+    .codebox { border: 1px solid var(--line); border-radius: 16px; background: #08090a; padding: 16px; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.65; white-space: pre-wrap; }
+    footer { padding: 36px 0 56px; color: var(--dim); text-align: center; font-size: 13px; }
+
+    @media (max-width: 900px) {
+      .nav-links a:not(.btn) { display: none; }
+      .grid, .submission { grid-template-columns: 1fr; }
+      .stats, .steps, .model-grid { grid-template-columns: repeat(2, 1fr); }
+      .section-head { align-items: start; flex-direction: column; }
+    }
+    @media (max-width: 620px) {
+      .hero { padding-top: 54px; }
+      .stats, .steps, .model-grid, .form-row { grid-template-columns: 1fr; }
+      .nav-inner { min-height: 62px; }
+      h1 { letter-spacing: -1px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="wrap nav-inner">
+      <a href="#top" class="logo"><span class="mark">ψ</span><span>PsyFlow</span></a>
+      <div class="nav-links">
+        <a href="#demo">Demo</a>
+        <a href="#models">Models</a>
+        <a href="#submission">Submission</a>
+        <a class="btn primary" href="#demo">Try prototype</a>
+      </div>
+    </div>
+  </nav>
+
+  <header id="top" class="hero wrap">
+    <span class="pill"><span class="dot"></span> AI marketing psychology agent prototype</span>
+    <h1>AI marketing psychology audits for builders who need clearer conversion.</h1>
+    <p>PsyFlow turns rough landing pages, product ideas, ads, and onboarding flows into an ethical conversion audit using Jobs To Be Done, AIDA, Hick’s Law, Social Proof, Loss Aversion, BJ Fogg, and EAST.</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="#demo">Run demo audit</a>
+      <button class="btn" onclick="copySubmission()">Copy submission text</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><strong>7+</strong><span>psychology models</span></div>
+      <div class="stat"><strong>5</strong><span>agent output sections</span></div>
+      <div class="stat"><strong>API</strong><span>model-ready architecture</span></div>
+      <div class="stat"><strong>HTML</strong><span>easy demo prototype</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section id="demo" class="section wrap">
+      <div class="section-head">
+        <h2>Interactive prototype</h2>
+        <p>Static demo that simulates the final AI agent output. The real build would call a model API and return structured JSON.</p>
+      </div>
+
+      <div class="grid">
+        <section class="card">
+          <div class="console"><span class="traffic"></span>input/product-context.md</div>
+          <div class="card-pad">
+            <h3>1. Paste product context</h3>
+            <label for="input">Landing page, product idea, campaign, or onboarding flow</label>
+            <textarea id="input">I built a Telegram AI dev assistant that helps non-technical founders install projects, configure API keys, debug VPS services, and route models through OpenAI-compatible APIs.</textarea>
+            <div class="form-row">
+              <div>
+                <label for="stage">Funnel stage</label>
+                <select id="stage">
+                  <option>Landing page</option>
+                  <option>Onboarding</option>
+                  <option>Pricing page</option>
+                  <option>Ad campaign</option>
+                </select>
+              </div>
+              <div>
+                <label for="goal">Desired behavior</label>
+                <input id="goal" value="Start a demo" />
+              </div>
+            </div>
+            <div class="chips" aria-label="Selected mental models">
+              <span class="chip active">Jobs To Be Done</span>
+              <span class="chip active">AIDA</span>
+              <span class="chip active">Hick’s Law</span>
+              <span class="chip active">Social Proof</span>
+              <span class="chip">Loss Aversion</span>
+              <span class="chip">BJ Fogg</span>
+              <span class="chip">EAST</span>
+            </div>
+            <button class="btn primary full" onclick="generateAudit()">Generate psychology audit</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="console"><span class="traffic"></span>output/agent-report.json</div>
+          <div class="card-pad">
+            <h3>2. Agent report</h3>
+            <div class="score-card">
+              <div class="score-top">
+                <div><strong>Conversion clarity</strong><div class="muted">Outcome, friction, proof, and prompt strength</div></div>
+                <div id="score" class="score-number">74</div>
+              </div>
+              <div class="meter"><div id="bar" class="bar"></div></div>
+            </div>
+            <div id="report" class="report" style="margin-top:12px">
+              <div class="finding"><strong>Core job</strong><p>Your user is not buying an “agent”; they are hiring it to avoid VPS, API, and deployment confusion.</p></div>
+              <div class="finding"><strong>Main friction</strong><p>Technical terms appear before the outcome is clear. This increases cognitive load and delays action.</p></div>
+              <div class="finding"><strong>Best nudge</strong><p>Lead with: “Send a Telegram message, get your server fixed.” Then show proof through logs and screenshots.</p></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="models" class="section wrap">
+      <div class="section-head">
+        <h2>What the agent analyzes</h2>
+        <p>Each model maps a marketing weakness to a concrete improvement, so the output is useful instead of generic.</p>
+      </div>
+      <div class="model-grid">
+        <article class="model"><span class="tag">JTBD</span><h3>Core job</h3><p>Finds what the buyer is really hiring the product to do, then rewrites around the outcome.</p></article>
+        <article class="model"><span class="tag">AIDA</span><h3>Page flow</h3><p>Checks whether the copy moves from attention to interest, desire, and action.</p></article>
+        <article class="model"><span class="tag">HICK</span><h3>Choice load</h3><p>Flags too many CTAs, confusing paths, and form friction that slows decisions.</p></article>
+        <article class="model"><span class="tag">PROOF</span><h3>Trust gaps</h3><p>Suggests testimonials, numbers, demos, screenshots, logos, or evidence that reduce risk.</p></article>
+        <article class="model"><span class="tag">FOGG</span><h3>Behavior trigger</h3><p>Balances motivation, ability, and prompt so the desired user action becomes easier.</p></article>
+        <article class="model"><span class="tag">EAST</span><h3>Nudge design</h3><p>Makes the next step easy, attractive, social, and timely without dark patterns.</p></article>
+      </div>
+    </section>
+
+    <section class="section wrap">
+      <div class="section-head">
+        <h2>Agent workflow</h2>
+        <p>Designed as a simple agent loop that can later be connected to any model API endpoint.</p>
+      </div>
+      <div class="steps">
+        <article class="step" data-step="1"><h3>Extract</h3><p>Audience, promise, CTA, desired behavior, objections, and current funnel stage.</p></article>
+        <article class="step" data-step="2"><h3>Diagnose</h3><p>Map weaknesses to mental models such as JTBD, AIDA, Hick’s Law, and social proof.</p></article>
+        <article class="step" data-step="3"><h3>Rewrite</h3><p>Generate clearer headlines, CTAs, proof blocks, onboarding prompts, and page structure.</p></article>
+        <article class="step" data-step="4"><h3>Prioritize</h3><p>Rank fixes by impact and effort, then suggest A/B tests for validation.</p></article>
+      </div>
+    </section>
+
+    <section id="submission" class="section wrap">
+      <div class="section-head">
+        <h2>Submission-ready copy</h2>
+        <p>Text below can be reused in a GitHub README, demo page, or product submission form.</p>
+      </div>
+      <div class="submission">
+        <div class="card card-pad">
+          <h3>Suggested settings</h3>
+          <p class="muted"><strong>Agent tool:</strong> Web-based AI agent prototype<br><strong>Primary model:</strong> OpenAI-compatible LLM API<br><strong>Project type:</strong> AI marketing / growth assistant / copy audit agent</p>
+          <p class="muted">Prototype scope: static HTML demo now; API-connected structured agent in the next build.</p>
+        </div>
+        <pre id="submissionText" class="codebox">PsyFlow is an AI marketing psychology agent that helps builders improve landing pages, product positioning, onboarding flows, and campaign copy. Users paste their product context, and the agent analyzes it with behavioral science models such as Jobs To Be Done, AIDA, Hick’s Law, Social Proof, Loss Aversion, BJ Fogg Behavior Model, and EAST. It then produces an ethical conversion audit, prioritized action plan, and A/B testing ideas. The goal is to help indie builders and small teams make clearer marketing decisions without hiring a full CRO or marketing strategist.</pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap">PsyFlow prototype — built for an API-powered AI agent workflow. No dark patterns; ethical persuasion only.</footer>
+
+  <script>
+    const sampleOutputs = {
+      "Landing page": [
+        ["Core job", "The buyer wants a quick path from product confusion to a clearer message that can be shipped today."],
+        ["Main friction", "The page explains features before it proves the painful problem and the promised outcome."],
+        ["Best nudge", "Use one primary CTA above the fold and show a tiny example output before asking for commitment."]
+      ],
+      "Onboarding": [
+        ["Activation energy", "The first step feels too large. The user needs a small win before setup becomes serious."],
+        ["Goal-gradient", "Show progress with 3 steps: paste context, get audit, apply first fix."],
+        ["Prompt timing", "Ask for product context only after showing what a completed audit looks like."]
+      ],
+      "Pricing page": [
+        ["Anchoring", "Introduce a higher expert-review alternative so the AI audit feels like a practical first step."],
+        ["Choice load", "Three tiers are enough. Mark one recommended path for most indie builders."],
+        ["Risk reversal", "Add trial, sample report, or guarantee language to reduce regret aversion."]
+      ],
+      "Ad campaign": [
+        ["Attention", "Open with the pain of unclear positioning, not the existence of another AI tool."],
+        ["Desire", "Show a before/after headline rewrite so the benefit becomes concrete."],
+        ["Social proof", "Use specific proof: number of audits, screenshots, public examples, or founder quotes."]
+      ]
+    };
+
+    function copySubmission() {
+      const text = document.getElementById('submissionText').innerText;
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text);
+      }
+      document.getElementById('submission').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function escapeHTML(value) {
+      return value.replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+    }
+
+    function generateAudit() {
+      const text = document.getElementById('input').value.trim();
+      const stage = document.getElementById('stage').value;
+      const goal = document.getElementById('goal').value.trim() || 'take action';
+      const base = Math.min(91, Math.max(46, 52 + Math.floor(text.length / 18)));
+      const clarityBonus = /because|without|so that|helps|for|avoid|save|increase/i.test(text) ? 7 : 0;
+      const score = Math.min(96, base + clarityBonus);
+      document.getElementById('score').textContent = score;
+      document.getElementById('bar').style.width = score + '%';
+
+      const outputs = sampleOutputs[stage] || sampleOutputs['Landing page'];
+      const html = outputs.map(([title, body]) => `<div class="finding"><strong>${escapeHTML(title)}</strong><p>${escapeHTML(body)} Desired behavior: ${escapeHTML(goal)}.</p></div>`).join('');
+      document.getElementById('report').innerHTML = html;
+    }
+  </script>
+</body>
+</html>
